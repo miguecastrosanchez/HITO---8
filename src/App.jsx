@@ -15,7 +15,7 @@ import Cart from './pages/Cart'
 import Pizza from './components/Pizza'
 import E404 from './pages/E404'
 import Profiles from './pages/Profiles'
-import profile from './components/profile'
+
 
 import './App.css'
 import { Route, Routes } from 'react-router-dom'
@@ -26,7 +26,7 @@ import { UserContext } from './context/UserContext'
 
 
 function App() {
-  const [count, setCount] = useState(0)
+const [count, setCount] = useState(0)
 
 const {user, setUser} = useContext(GlobalContext);
 const {login, setLogin} = useContext(UserContext);
