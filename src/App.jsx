@@ -42,7 +42,7 @@ const {login, setLogin} = useContext(UserContext);
       <Route path='/pizza/:id' element={<PizzaDetail/>}/>
       <Route path='/Cart' element={<Cart/>}/>
       <Route path='/Login' element={<Login/>}/>
-      <Route path='/Register' element={<Register/>}/>
+      <Route path='/Register' element={login ? <Home/> : <Register/>}/>
       <Route path='/Profile' element={login ? <Profiles/> : <Login/>}/>
       <Route path='*' element={<E404/>}/> 
    
