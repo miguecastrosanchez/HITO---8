@@ -1,26 +1,15 @@
-import { Link } from "react-router-dom";
 import { useContext } from "react";
-import { UserContext } from "../context/UserContext";
-import { GlobalContext } from "../context/GlobalContext.jsx";
 import { useNavigate } from "react-router-dom";
-import Button from "react-bootstrap/Button";
-
-
+import { UserContext } from "../context/UserContext.jsx";
 
 function Profile() {
-  
-  const { user, setUser } = useContext(GlobalContext);
-  const { login, setLogin } = useContext(UserContext);
+  const { email, logout } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const logOut = function(){
-    
-    setUser({})
-    setLogin(false)
-    alert("Sesión cerrada correctamente")
-    navigate("/Login")
-
-  }
+  const logOut = () => {
+    logout();
+    navigate("/Login");
+  };
 
   return (
     <div className="container d-flex justify-content-center align-items-center my-5">
@@ -40,21 +29,15 @@ function Profile() {
           <div className="mb-4">
             <label className="form-label fw-bold">Email</label>
             <div className="form-control py-3">
-              {user?.email || "No hay email registrado"}
+              {email || "No hay email registrado"}
             </div>
           </div>
 
-          <div className="mb-4">
-            <label className="form-label fw-bold">Password</label>
-            <div className="form-control py-3">
-              {user?.password ? user.password : "No hay password registrada"}
-            </div>
-          </div>
-        
-        {/* <Button variant="dark" className="me-2" onClick={()=> logOut()}> Cerrar Session</Button> */}
-        
-        <button className="btn btn-dark w-100 py-2 fw-bold" onClick={()=> logOut()}>
-           Cerrar Sesión
+          <button
+            className="btn btn-dark w-100 py-2 fw-bold"
+            onClick={logOut}
+          >
+            Cerrar Sesión
           </button>
         </div>
       </div>
@@ -63,4 +46,3 @@ function Profile() {
 }
 
 export default Profile;
-
