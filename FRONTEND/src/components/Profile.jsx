@@ -1,10 +1,24 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext.jsx";
 
 function Profile() {
-  const { email, logout } = useContext(UserContext);
+  const { email, logout, getProfile } = useContext(UserContext);
+  const [profile, setProfile] = useState(null);
+
   const navigate = useNavigate();
+
+  const cargarPerfil = async () => {
+    const data = await getProfile();
+
+    if (data) {
+      setProfile(data);
+    }
+  };
+
+  useEffect(() => {
+    cargarPerfil();
+  }, []);
 
   const logOut = () => {
     logout();
@@ -22,21 +36,23 @@ function Profile() {
         }}
       >
         <div className="card-body">
-          <h1 className="text-center mb-4 fw-bold">
-            Perfil de Usuario
-          </h1>
+          <h1 className="text-center mb-4 fw-bold">Perfil de Usuario</h1>
 
           <div className="mb-4">
-            <label className="form-label fw-bold">Email</label>
+            <label className="form-label fw-bold">Email guardado</label>
             <div className="form-control py-3">
               {email || "No hay email registrado"}
             </div>
           </div>
 
-          <button
-            className="btn btn-dark w-100 py-2 fw-bold"
-            onClick={logOut}
-          >
+          <div className="mb-4">
+            <label className="form-label fw-bold">Perfil desde backend</label>
+            <div className="form-control py-3">
+              {profile ? profile.email : "Cargando perfil..."}
+            </div>
+          </div>
+
+          <button className="btn btn-dark w-100 py-2 fw-bold" onClick={logOut}>
             Cerrar Sesión
           </button>
         </div>
