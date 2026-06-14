@@ -1,19 +1,73 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
 import { UserContext } from "../context/UserContext.jsx";
 
+const API_URL = "http://localhost:5001/api";
+
 function Carrito() {
-  
-  const { carrito, agregarPizza, quitarPizza, total } = useContext(CartContext);
-  console.log("CARRITO ACTUAL:", carrito);
+  const {
+    carrito,
+    agregarPizza,
+    quitarPizza,
+    total,
+    limpiarCarrito,
+  } = useContext(CartContext);
 
-  const{login, setLogin} = useContext(UserContext);
+  const { login, token } = useContext(UserContext);
 
+  const [mensaje, setMensaje] = useState("");
+
+  const pagarCarrito = async () => {
+    if (!login) {
+      alert("Debes iniciar sesión para comprar");
+      return;
+    }
+
+    if (carrito.length === 0) {
+      alert("El carrito está vacío");
+      return;
+    }
+
+    try {
+      const respuesta = await fetch(`${API_URL}/checkouts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          cart: carrito,
+        }),
+      });
+
+      const data = await respuesta.json();
+
+      console.log("RESPUESTA CHECKOUT:", data);
+      console.log("STATUS CHECKOUT:", respuesta.status);
+
+      if (!respuesta.ok) {
+        alert(data.message || data.error || "Error al realizar la compra");
+        return;
+      }
+
+      setMensaje("Compra realizada con éxito 🍕");
+      limpiarCarrito();
+    } catch (error) {
+      console.log("Error en checkout:", error);
+      alert("Error al conectar con el servidor");
+    }
+  };
 
   return (
     <>
       <div className="container mt-4">
         <h1>CARRITO DE COMPRAS</h1>
+
+        {mensaje && (
+          <div className="alert alert-success mt-4">
+            {mensaje}
+          </div>
+        )}
 
         {carrito.length === 0 ? (
           <div className="alert alert-warning mt-4">
@@ -44,7 +98,9 @@ function Carrito() {
 
                         <div>
                           <h5 className="mb-1">{p.name}</h5>
-                          <p className="mb-0">{p.ingredients.join(", ")}</p>
+                          <p className="mb-0">
+                            {p.ingredients.join(", ")}
+                          </p>
                         </div>
                       </div>
 
@@ -81,9 +137,15 @@ function Carrito() {
               </div>
 
               <div className="text-end">
-                {
-                  login ? <button className="btn btn-dark">Pagar</button> : <p className="text-muted">Inicia sesión para proceder al pago.</p>
-                }
+                {login ? (
+                  <button className="btn btn-dark" onClick={pagarCarrito}>
+                    Pagar
+                  </button>
+                ) : (
+                  <p className="text-muted">
+                    Inicia sesión para proceder al pago.
+                  </p>
+                )}
               </div>
             </div>
           </div>

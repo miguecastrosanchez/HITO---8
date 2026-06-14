@@ -43,6 +43,10 @@ function CartProvider({ children }) {
     0
   );
 
+  const limpiarCarrito = () => {
+  setCarrito([]);
+};
+
   return (
     <CartContext.Provider
       value={{
@@ -50,6 +54,7 @@ function CartProvider({ children }) {
         agregarPizza,
         quitarPizza,
         total,
+        limpiarCarrito,
       }}
     >
       {children}
